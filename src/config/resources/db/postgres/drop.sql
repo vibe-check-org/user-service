@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS adresse;
+DROP TABLE IF EXISTS "user";

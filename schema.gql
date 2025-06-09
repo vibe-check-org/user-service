@@ -1,0 +1,55 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Adresse {
+  id: ID!
+  strasse: String!
+  plz: String!
+  ort: String!
+  land: String
+}
+
+type User {
+  id: ID!
+  vorname: String!
+  nachname: String!
+  email: String!
+  geburtsdatum: DateTime
+  profilbildUrl: String
+  rolle: String!
+  adressen: [Adresse!]
+  erstelltAm: DateTime!
+  aktualisiertAm: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  findAllUser: [User!]!
+  findById(id: String!): User!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+}
+
+input CreateUserInput {
+  vorname: String!
+  nachname: String!
+  email: String!
+  geburtsdatum: DateTime
+  organisation: String!
+  rolle: String!
+  adressen: [CreateAdresseInput!]
+}
+
+input CreateAdresseInput {
+  strasse: String!
+  plz: String!
+  ort: String!
+  land: String! = "Deutschland"
+}
