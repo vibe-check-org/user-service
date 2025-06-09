@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import {
@@ -27,14 +24,11 @@ class ConfigModule {}
     providers: [
         KeycloakService,
         {
-            // fuer @UseGuards(AuthGuard)
             provide: APP_GUARD,
             useClass: AuthGuard,
         },
         {
-            // fuer @Roles({ roles: ['admin'] }) einschl. @Public() und @AllowAnyRole()
             provide: APP_GUARD,
-            // useClass: RoleGuard,
             useClass: KeycloakGuard,
         },
     ],

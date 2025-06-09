@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+
 import { Injectable } from '@nestjs/common';
 import axios, { type AxiosInstance } from 'axios';
 import {

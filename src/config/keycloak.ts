@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { config } from './app.js';
 import { env } from './env.js';
 import {
