@@ -1,10 +1,12 @@
 singleQuote: true
 tabWidth: 2
 trailingComma: all
+printWidth: 80
+semi: true
 overrides:
-  - files: ["*.ts", "*.mts", "*.js", "*.mjs", "*.cjs"]
+  - files: "*.ts *.mts *.js *.mjs *.cjs"
     options:
-      tabWidth: 4
-  - files: ["*.yml", "*.yaml"]
-    options:
-      singleQuote: false
+      tabWidth: 2
+plugins:
+  - './node_modules/prettier-plugin-sort-imports/dist/index.js'
+sortingMethod: 'alphabetical'

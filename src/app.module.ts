@@ -14,6 +14,7 @@ import { LoggerModule } from './logger/logger.module.js';
 import { RequestLoggerMiddleware } from './logger/request-logger.middleware.js';
 import { KafkaModule } from './messaging/kafka.module.js';
 import { UserModule } from './user/user.module.js';
+import { HealthModule } from './health/health.module.js';
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ import { UserModule } from './user/user.module.js';
         TypeOrmModule.forRoot(typeOrmModuleOptions),
         KafkaModule,
         UserModule,
+        HealthModule
     ],
 })
 export class AppModule implements NestModule {
