@@ -22,7 +22,7 @@ export class UserResolver {
     }
 
     @Query(() => User)
-    @Roles({ roles: ['Admin', 'User'] })
+    @Roles({ roles: ['Admin', 'BEWERBER', 'RECRUITER'] })
     findById(@Args('id') id: string) {
         return this.#userService.findById(id);
     }
