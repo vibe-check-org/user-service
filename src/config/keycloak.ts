@@ -35,4 +35,6 @@ export const paths = {
     accessToken: `realms/${realm}/protocol/openid-connect/token`,
     userInfo: `realms/${realm}/protocol/openid-connect/userinfo`,
     introspect: `realms/${realm}/protocol/openid-connect/token/introspect`,
+    admin: `admin/realms/${realm}/users`,
+    roles: `/admin/realms/${realm}/roles`,
 };

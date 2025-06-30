@@ -19,6 +19,10 @@ export class User {
     @Field(() => ID)
     id: string;
 
+    @Column({ name: 'username' })
+    @Field()
+    name: string;
+
     @Column()
     @Field()
     vorname: string;

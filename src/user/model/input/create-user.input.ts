@@ -15,6 +15,14 @@ export class CreateUserInput {
     nachname: string;
 
     @Field()
+    @IsString()
+    username: string;
+
+    @Field()
+    @IsString()
+    password: string;
+
+    @Field()
     @IsEmail()
     email: string;
 
