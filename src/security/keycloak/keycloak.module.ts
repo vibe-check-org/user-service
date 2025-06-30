@@ -5,6 +5,7 @@ import { KeycloakConnectModule } from 'nest-keycloak-connect';
 import { KeycloakService } from './keycloak.service.js';
 import { KeycloakGuard } from './guards/keycloak.guard.js';
 import { KeycloakAdminService } from './keycloak-admin.service.js';
+import { EmailVerificationController } from './token.controller.js';
 
 @Module({
   providers: [KeycloakService],
@@ -13,6 +14,7 @@ import { KeycloakAdminService } from './keycloak-admin.service.js';
 class ConfigModule {}
 
 @Module({
+  controllers: [EmailVerificationController],
   imports: [
     KeycloakConnectModule.registerAsync({
       useExisting: KeycloakService,

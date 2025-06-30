@@ -5,12 +5,14 @@ import { User } from '../model/entity/user.entity.js';
 import { CreateUserInput } from '../model/input/create-user.input.js';
 import { Adresse } from '../model/entity/adresse.entity.js';
 import { KeycloakAdminService } from '../../security/keycloak/keycloak-admin.service.js';
+import { KafkaProducerService } from '../../messaging/kafka-producer.service.js';
 
 @Injectable()
 export class UserService {
     readonly #userRepo: Repository<User>;
     readonly #adresseRepo: Repository<Adresse>;
     readonly #keycloakAdminService: KeycloakAdminService;
+    readonly #kafkaProducerService: KafkaProducerService;
 
     constructor(
         @InjectRepository(User)
@@ -18,10 +20,12 @@ export class UserService {
         @InjectRepository(Adresse)
         adresseRepo: Repository<Adresse>,
         keycloakAdminService: KeycloakAdminService,
+        kafkaProducerService: KafkaProducerService,
     ) {
         this.#userRepo = userRepo;
         this.#adresseRepo = adresseRepo;
         this.#keycloakAdminService = keycloakAdminService;
+        this.#kafkaProducerService = kafkaProducerService;
     }
 
     async create(input: CreateUserInput): Promise<User> {
@@ -35,10 +39,17 @@ export class UserService {
 
         const password = input.password;
         const roleName = input.rolle;
-        await this.#keycloakAdminService.signIn(
+
+        const keycloakUserId = await this.#keycloakAdminService.signIn(
             user,
             password,
             roleName,
+        );
+
+        await this.#kafkaProducerService.sendMailNotification(
+            'create',
+            { username: user.name, email: user.email, userId: keycloakUserId },
+            'user-service',
         );
 
         return await this.#userRepo.save(user);

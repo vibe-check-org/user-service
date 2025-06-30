@@ -16,8 +16,6 @@ export class KeycloakAdminService {
     constructor( keycloakService: KeycloakService) {
         this.#client = axios.create({ baseURL: authServerUrl });
         this.#keycloakService = keycloakService;
-
-      
     }
 
     async signIn(user: User, password: string, roleName: string) {
@@ -33,7 +31,7 @@ export class KeycloakAdminService {
             ],
         };
         this.#logger.debug('signIn: userData=%o', userData);
-        const adminToken = await this.#getAdminToken();
+        const adminToken = await this.getAdminToken();
 
         try {
             await this.#client.post(paths.admin, userData, {
@@ -45,6 +43,7 @@ export class KeycloakAdminService {
 
             const userId = await this.getUserIdByUsername(adminToken, user.name);
             await this.assignRoleToUser(userId, roleName, adminToken);
+            return userId;
         } catch(error: any) {
             this.#logger.error('signIn failed: %o', {
                 message: error?.message,
@@ -159,7 +158,7 @@ export class KeycloakAdminService {
         return res.data;
     }
 
-    async #getAdminToken(): Promise<string> {
+    async getAdminToken(): Promise<string> {
         const token =  await this.#keycloakService.login({
             username: 'admin',
             password: 'p',
