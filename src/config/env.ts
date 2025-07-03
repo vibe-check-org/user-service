@@ -5,23 +5,23 @@ import process from 'node:process';
 dotenv.config();
 
 const {
-    NODE_ENV,
-    CLIENT_SECRET,
-    LOG_DEFAULT,
-    START_DB_SERVER,
-    GRAPHQL_SCHEMA,
-    KEYS_PATH,
-    HTTPS,
+  NODE_ENV,
+  CLIENT_SECRET,
+  LOG_DEFAULT,
+  START_DB_SERVER,
+  GRAPHQL_SCHEMA,
+  KEYS_PATH,
+  HTTPS,
 } = process.env;
 
 export const env = {
-    NODE_ENV,
-    CLIENT_SECRET,
-    LOG_DEFAULT,
-    START_DB_SERVER,
-    GRAPHQL_SCHEMA,
-    KEYS_PATH,
-    HTTPS,
+  NODE_ENV,
+  CLIENT_SECRET,
+  LOG_DEFAULT,
+  START_DB_SERVER,
+  GRAPHQL_SCHEMA,
+  KEYS_PATH,
+  HTTPS,
 } as const;
 
 console.debug('NODE_ENV = %s', NODE_ENV);

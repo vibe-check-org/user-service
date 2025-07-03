@@ -9,9 +9,9 @@
 
 import { Controller, Get } from '@nestjs/common';
 import {
-    HealthCheck,
-    HealthCheckService,
-    TypeOrmHealthIndicator,
+  HealthCheck,
+  HealthCheckService,
+  TypeOrmHealthIndicator,
 } from '@nestjs/terminus';
 
 /**
@@ -19,30 +19,30 @@ import {
  */
 @Controller('health')
 export class HealthController {
-    readonly #health: HealthCheckService;
+  readonly #health: HealthCheckService;
 
-    readonly #typeorm: TypeOrmHealthIndicator;
+  readonly #typeorm: TypeOrmHealthIndicator;
 
-    constructor(health: HealthCheckService, typeorm: TypeOrmHealthIndicator) {
-        this.#health = health;
-        this.#typeorm = typeorm;
-    }
+  constructor(health: HealthCheckService, typeorm: TypeOrmHealthIndicator) {
+    this.#health = health;
+    this.#typeorm = typeorm;
+  }
 
-    @Get('liveness')
-    @HealthCheck()
-    live() {
-        return this.#health.check([
-            () => ({
-                appserver: {
-                    status: 'up',
-                },
-            }),
-        ]);
-    }
+  @Get('liveness')
+  @HealthCheck()
+  live() {
+    return this.#health.check([
+      () => ({
+        appserver: {
+          status: 'up',
+        },
+      }),
+    ]);
+  }
 
-    @Get('readiness')
-    @HealthCheck()
-    ready() {
-        return this.#health.check([() => this.#typeorm.pingCheck('db')]);
-    }
+  @Get('readiness')
+  @HealthCheck()
+  ready() {
+    return this.#health.check([() => this.#typeorm.pingCheck('db')]);
+  }
 }

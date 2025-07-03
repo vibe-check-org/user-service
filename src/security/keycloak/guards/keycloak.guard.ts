@@ -20,15 +20,13 @@ export class KeycloakGuard implements CanActivate {
   }
 
   canActivate(context: ExecutionContext): boolean {
-    const isPublic = this.#reflector.getAllAndOverride<boolean>(
-      IS_PUBLIC_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+    const isPublic = this.#reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     if (isPublic) {
-      this.#logger.debug(
-        '🔓 Öffentliche Route erkannt – Zugriff erlaubt',
-      );
+      this.#logger.debug('🔓 Öffentliche Route erkannt – Zugriff erlaubt');
       return true;
     }
 
@@ -40,9 +38,7 @@ export class KeycloakGuard implements CanActivate {
       request?.body?.operationName === 'IntrospectionQuery';
 
     if (isIntrospection) {
-      this.#logger.debug(
-        '🧪 Introspectionsabfrage erkannt – Zugriff erlaubt',
-      );
+      this.#logger.debug('🧪 Introspectionsabfrage erkannt – Zugriff erlaubt');
       return true;
     }
 

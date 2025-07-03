@@ -5,8 +5,8 @@
  * @packageDocumentation
  */
 
-import type pino from 'pino';
 import { parentLogger } from '../config/logger.js';
+import type pino from 'pino';
 
 /**
  * Eine-Klasse, um ein Logger-Objekt von `Pino` zu erzeugen, so dass ein
@@ -16,12 +16,12 @@ import { parentLogger } from '../config/logger.js';
  * @param kind i.a. `class`
  */
 export const getLogger: (
-    context: string,
-    kind?: string,
+  context: string,
+  kind?: string,
 ) => pino.Logger<string> = (context: string, kind = 'class') => {
-    const bindings: Record<string, string> = {};
-    // "indexed access" auf eine Property, deren Name als Wert im Argument "kind" uebergeben wird
-    bindings[kind] = context;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    return parentLogger.child(bindings);
+  const bindings: Record<string, string> = {};
+  // "indexed access" auf eine Property, deren Name als Wert im Argument "kind" uebergeben wird
+  bindings[kind] = context;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  return parentLogger.child(bindings);
 };

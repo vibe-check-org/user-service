@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS "user" (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY,
   vorname TEXT NOT NULL,
   nachname TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
@@ -19,4 +19,11 @@ CREATE TABLE IF NOT EXISTS adresse (
   ort TEXT NOT NULL,
   land TEXT,
   user_id UUID REFERENCES "user"(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS vibe_profile (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID UNIQUE NOT NULL,
+  skills JSONB,
+  erstellt_am TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

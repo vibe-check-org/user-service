@@ -1,6 +1,6 @@
+import { getLogger } from './logger.js';
 import { Injectable, type NestMiddleware } from '@nestjs/common';
 import { type NextFunction, type Request, type Response } from 'express';
-import { getLogger } from './logger.js';
 
 /**
  * Die Middleware (-Funktion) wird vor dem "Route Handler" aufgerufen.
@@ -9,23 +9,23 @@ import { getLogger } from './logger.js';
  */
 @Injectable()
 export class RequestLoggerMiddleware implements NestMiddleware {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    readonly #logger = getLogger(RequestLoggerMiddleware.name);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  readonly #logger = getLogger(RequestLoggerMiddleware.name);
 
-    /**
-     * @param req Request-Objekt von Express
-     * @param _res Nicht-verwendetes Response-Objekt von Express
-     * @param next Funktion der als nächstes aufzurufenden Middleware
-     */
-    use(req: Request, _res: Response, next: NextFunction) {
-        const { method, originalUrl, headers } = req;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        this.#logger.debug(
-            'method=%s, url=%s, header=%o',
-            method,
-            originalUrl,
-            headers,
-        );
-        next();
-    }
+  /**
+   * @param req Request-Objekt von Express
+   * @param _res Nicht-verwendetes Response-Objekt von Express
+   * @param next Funktion der als nächstes aufzurufenden Middleware
+   */
+  use(req: Request, _res: Response, next: NextFunction) {
+    const { method, originalUrl, headers } = req;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    this.#logger.debug(
+      'method=%s, url=%s, header=%o',
+      method,
+      originalUrl,
+      headers,
+    );
+    next();
+  }
 }

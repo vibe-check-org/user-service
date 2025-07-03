@@ -1,97 +1,119 @@
+import { KafkaProducerService } from '../../messaging/kafka-producer.service.js';
+import { KeycloakAdminService } from '../../security/keycloak/keycloak-admin.service.js';
+import { Adresse } from '../model/entity/adresse.entity.js';
+import { User } from '../model/entity/user.entity.js';
+import { CreateUserInput } from '../model/input/create-user.input.js';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../model/entity/user.entity.js';
-import { CreateUserInput } from '../model/input/create-user.input.js';
-import { Adresse } from '../model/entity/adresse.entity.js';
-import { KeycloakAdminService } from '../../security/keycloak/keycloak-admin.service.js';
-import { KafkaProducerService } from '../../messaging/kafka-producer.service.js';
+import { UpdateUserInput } from '../model/input/update-user.input.js';
+import { VibeProfil } from '../model/entity/profile.entity.js';
 
 @Injectable()
 export class UserService {
-    readonly #userRepo: Repository<User>;
-    readonly #adresseRepo: Repository<Adresse>;
-    readonly #keycloakAdminService: KeycloakAdminService;
-    readonly #kafkaProducerService: KafkaProducerService;
+  readonly #userRepo: Repository<User>;
+  readonly #adresseRepo: Repository<Adresse>;
+  readonly #profileRepo: Repository<VibeProfil>;
+  readonly #keycloakAdminService: KeycloakAdminService;
+  readonly #kafkaProducerService: KafkaProducerService;
 
-    constructor(
-        @InjectRepository(User)
-        userRepo: Repository<User>,
-        @InjectRepository(Adresse)
-        adresseRepo: Repository<Adresse>,
-        keycloakAdminService: KeycloakAdminService,
-        kafkaProducerService: KafkaProducerService,
-    ) {
-        this.#userRepo = userRepo;
-        this.#adresseRepo = adresseRepo;
-        this.#keycloakAdminService = keycloakAdminService;
-        this.#kafkaProducerService = kafkaProducerService;
-    }
+  constructor(
+    @InjectRepository(User)
+    userRepo: Repository<User>,
+    @InjectRepository(Adresse)
+    adresseRepo: Repository<Adresse>,
+    @InjectRepository(VibeProfil)
+    profileRepo: Repository<VibeProfil>,
+    keycloakAdminService: KeycloakAdminService,
+    kafkaProducerService: KafkaProducerService,
+  ) {
+    this.#userRepo = userRepo;
+    this.#profileRepo = profileRepo;
+    this.#adresseRepo = adresseRepo;
+    this.#keycloakAdminService = keycloakAdminService;
+    this.#kafkaProducerService = kafkaProducerService;
+  }
 
-    async create(input: CreateUserInput): Promise<User> {
-        const user = this.#userRepo.create({
-            ...input,
-            name: input.username,
-            adressen: input.adressen?.map((adresseInput) =>
-                this.#adresseRepo.create(adresseInput),
-            ),
-        });
+  async findAll(): Promise<User[]> {
+    return this.#userRepo.find({ relations: ['adressen', 'profile'] });
+  }
 
-        const password = input.password;
-        const roleName = input.rolle;
+  async findById(id: string): Promise<User> {
+    const user = await this.#userRepo.findOne({
+      where: { id },
+      relations: ['adressen', 'profile'],
+    });
+    if (!user) throw new NotFoundException(`Benutzer mit ID ${id} nicht gefunden.`);
+    return user;
+  }
 
-        const keycloakUserId = await this.#keycloakAdminService.signIn(
-            user,
-            password,
-            roleName,
-        );
+  async create(input: CreateUserInput): Promise<User> {
+    const keycloakUserId = await this.#keycloakAdminService.signIn(
+      {
+        vorname: input.vorname,
+        nachname: input.nachname,
+        email: input.email,
+        name: input.username,
+      },
+      input.password,
+      input.rolle,
+    );
 
-        await this.#kafkaProducerService.sendMailNotification(
-            'create',
-            { username: user.name, email: user.email, userId: keycloakUserId },
-            'user-service',
-        );
+    const user = this.#userRepo.create({
+      id: keycloakUserId, // Keycloak-ID als Primary Key
+      ...input,
+      name: input.username,
+      adressen: input.adressen?.map((a) => this.#adresseRepo.create(a)),
+    });
 
-        return await this.#userRepo.save(user);
-    }
+    // Leeres Profil erstellen
+    const profil = this.#profileRepo.create({ user });
+    await this.#profileRepo.save(profil);
+    user.profile = profil;
 
-    async findAll(): Promise<User[]> {
-        return this.#userRepo.find({ relations: ['adressen'] });
-    }
 
-    async findById(id: string): Promise<User> {
-        const user = await this.#userRepo.findOne({
-            where: { id },
-            relations: ['adressen'],
-        });
+    await this.#kafkaProducerService.sendMailNotification('create', {
+      username: user.name,
+      email: user.email,
+      userId: keycloakUserId,
+    }, 'user-service');
 
-        if (!user) {
-            throw new NotFoundException(
-                `Benutzer mit ID ${id} nicht gefunden.`,
-            );
-        }
+    return this.#userRepo.save(user);
+  }
 
-        return user;
-    }
+  async update(id: string, input: UpdateUserInput): Promise<User> {
+    const user = await this.#userRepo.findOne({ where: { id }, relations: ['adressen', 'profile'] });
+    if (!user) throw new NotFoundException(`User with ID ${id} not found`);
 
-    async delete(id: string, token: string) {
-        const user = await this.#userRepo.findOne({ where: { id } });
+    Object.assign(user, input);
+    await this.#userRepo.save(user);
 
-        if (!user) {
-            throw new NotFoundException(
-                `Benutzer mit ID ${id} nicht gefunden.`,
-            );
-        }
+    const adminToken = await this.#keycloakAdminService.getAdminToken()
+    const userIdKeycloak = await this.#keycloakAdminService.getUserIdByUsername(adminToken, user.name);
+    await this.#keycloakAdminService.update(user, userIdKeycloak, adminToken);
 
-        // Löschen der Adressen des Benutzers
-        if (user.adressen) {
-            await this.#adresseRepo.remove(user.adressen);
-        }
+    return user;
+  }
 
-        await this.#keycloakAdminService.delete(user.name, token);
+  async updatePassword(id: string, newPassword: string, token: string): Promise<boolean> {
+    const user = await this.#userRepo.findOneBy({ id });
+    if (!user) throw new NotFoundException(`Benutzer mit ID ${id} nicht gefunden.`);
 
-        // Löschen des Benutzers
-        await this.#userRepo.remove(user);
-        return user.name;
-    }
+    const userIdKeycloak = await this.#keycloakAdminService.getUserIdByUsername(token, user.name);
+    await this.#keycloakAdminService.updatePassword(userIdKeycloak, newPassword, token);
+
+    return true;
+  }
+  
+
+  async delete(id: string, token: string) {
+    const user = await this.#userRepo.findOne({ where: { id }, relations: ['adressen', 'profile'] });
+    if (!user) throw new NotFoundException(`Benutzer mit ID ${id} nicht gefunden.`);
+
+    if (user.adressen) await this.#adresseRepo.remove(user.adressen);
+    await this.#keycloakAdminService.delete(user.name, token);
+    await this.#userRepo.remove(user);
+
+    return user.name;
+  }
 }

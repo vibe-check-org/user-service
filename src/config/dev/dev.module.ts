@@ -5,9 +5,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User])],
-    controllers: [DevController],
-    providers: [DbPopulateService],
-    exports: [DbPopulateService],
+  imports: [TypeOrmModule.forFeature([User])],
+  controllers: [DevController],
+  providers: [DbPopulateService],
+  exports: [DbPopulateService],
 })
 export class DevModule {}

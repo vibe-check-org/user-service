@@ -13,14 +13,14 @@ const computername = hostname();
 const port = (config.node?.port as number | undefined) ?? 3000;
 
 export const nodeConfig = {
-    host: computername,
-    port,
-    resourcesDir: RESOURCES_DIR,
-    databaseName: database,
-    nodeEnv: NODE_ENV as
-        | 'development'
-        | 'PRODUCTION'
-        | 'production'
-        | 'test'
-        | undefined,
+  host: computername,
+  port,
+  resourcesDir: RESOURCES_DIR,
+  databaseName: database,
+  nodeEnv: NODE_ENV as
+    | 'development'
+    | 'PRODUCTION'
+    | 'production'
+    | 'test'
+    | undefined,
 } as const;

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Kafka } from 'kafkajs';
 import { HealthIndicatorResult } from '@nestjs/terminus';
+import { Kafka } from 'kafkajs';
 
 @Injectable()
 export class KafkaIndicator {

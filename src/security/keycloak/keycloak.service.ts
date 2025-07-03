@@ -1,13 +1,17 @@
 /* eslint-disable camelcase, @typescript-eslint/naming-convention */
 
-import { Injectable } from '@nestjs/common';
-import axios, { AxiosResponse, RawAxiosRequestHeaders, type AxiosInstance } from 'axios';
 import { keycloakConnectOptions, paths } from '../../config/keycloak.js';
+import { getLogger } from '../../logger/logger.js';
+import { Injectable } from '@nestjs/common';
+import axios, {
+  AxiosResponse,
+  RawAxiosRequestHeaders,
+  type AxiosInstance,
+} from 'axios';
 import {
   type KeycloakConnectOptions,
   type KeycloakConnectOptionsFactory,
 } from 'nest-keycloak-connect';
-import { getLogger } from '../../logger/logger.js';
 
 const { authServerUrl, clientId, secret } = keycloakConnectOptions;
 
@@ -64,7 +68,6 @@ export class KeycloakService implements KeycloakConnectOptionsFactory {
     this.#logger.debug('login: response.data=%o', response.data);
     return response.data;
   }
-
 
   async getToken(context: any) {
     const rawAuth = context.req?.headers?.authorization;

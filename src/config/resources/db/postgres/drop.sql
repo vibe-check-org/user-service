@@ -1,2 +1,3 @@
+DROP TABLE IF EXISTS vibe_profile;
 DROP TABLE IF EXISTS adresse;
 DROP TABLE IF EXISTS "user";

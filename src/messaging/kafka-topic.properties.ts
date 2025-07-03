@@ -5,25 +5,25 @@
  */
 
 export const KafkaTopics = {
-    orchestrator: {
-        shutdown: 'user.shutdown.orchestrator',
-        start: 'user.start.orchestrator',
-        restart: 'user.restart.orchestrator',
+  orchestrator: {
+    shutdown: 'user.shutdown.orchestrator',
+    start: 'user.start.orchestrator',
+    restart: 'user.restart.orchestrator',
 
-        all: {
-            shutdown: 'all.shutdown.orchestrator',
-            start: 'all.start.orchestrator',
-            restart: 'all.restart.orchestrator',
-        },
+    all: {
+      shutdown: 'all.shutdown.orchestrator',
+      start: 'all.start.orchestrator',
+      restart: 'all.restart.orchestrator',
     },
-    notification: {
-        create: 'notification.create.user',
-        update: 'notification.update.user',
-        delete: 'notification.delete.user',
-    },
-    logStream: {
-        log: 'log-stream.log.user',
-    },
+  },
+  notification: {
+    create: 'notification.create.user',
+    update: 'notification.update.user',
+    delete: 'notification.delete.user',
+  },
+  logStream: {
+    log: 'log-stream.log.user',
+  },
 } as const;
 
 /**
@@ -36,11 +36,11 @@ export type KafkaTopicsType = typeof KafkaTopics;
  * Hilfsfunktion zur Auflistung aller konfigurierten Topic-Namen (z.B. für Subscriptions).
  */
 export function getAllKafkaTopics(): string[] {
-    const flatten = (obj: any): string[] =>
-        Object.values(obj).flatMap((value) =>
-            typeof value === 'string' ? [value] : flatten(value),
-        );
-    return flatten(KafkaTopics);
+  const flatten = (obj: any): string[] =>
+    Object.values(obj).flatMap((value) =>
+      typeof value === 'string' ? [value] : flatten(value),
+    );
+  return flatten(KafkaTopics);
 }
 
 /**
@@ -48,17 +48,17 @@ export function getAllKafkaTopics(): string[] {
  * @param keys z.B. ['User']
  */
 export function getKafkaTopicsBy(keys: string[]): string[] {
-    const result: string[] = [];
-    for (const key of keys) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const section = (KafkaTopics as Record<string, any>)[key];
-        if (section && typeof section === 'object') {
-            for (const topic of Object.values(section)) {
-                if (typeof topic === 'string') {
-                    result.push(topic);
-                }
-            }
+  const result: string[] = [];
+  for (const key of keys) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const section = (KafkaTopics as Record<string, any>)[key];
+    if (section && typeof section === 'object') {
+      for (const topic of Object.values(section)) {
+        if (typeof topic === 'string') {
+          result.push(topic);
         }
+      }
     }
-    return result;
+  }
+  return result;
 }

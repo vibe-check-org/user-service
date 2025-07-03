@@ -1,11 +1,11 @@
 // eslint-disable-next-line max-classes-per-file
+import { KeycloakGuard } from './guards/keycloak.guard.js';
+import { KeycloakAdminService } from './keycloak-admin.service.js';
+import { KeycloakService } from './keycloak.service.js';
+import { EmailVerificationController } from './token.controller.js';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { KeycloakConnectModule } from 'nest-keycloak-connect';
-import { KeycloakService } from './keycloak.service.js';
-import { KeycloakGuard } from './guards/keycloak.guard.js';
-import { KeycloakAdminService } from './keycloak-admin.service.js';
-import { EmailVerificationController } from './token.controller.js';
 
 @Module({
   providers: [KeycloakService],

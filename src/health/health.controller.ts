@@ -1,3 +1,5 @@
+import { Public } from '../security/keycloak/decorators/public.decorator.js';
+import { KafkaIndicator } from './kafka.indicator.js';
 import { Controller, Get } from '@nestjs/common';
 import {
   HealthCheckService,
@@ -5,8 +7,6 @@ import {
   HttpHealthIndicator,
   HealthCheck,
 } from '@nestjs/terminus';
-import { KafkaIndicator } from './kafka.indicator.js';
-import { Public } from '../security/keycloak/decorators/public.decorator.js';
 
 @Controller('health')
 export class HealthController {

@@ -1,11 +1,11 @@
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { DbPopulateService } from './db-populate.service.js';
 import {
-    Controller,
-    HttpStatus,
-    Post,
-    Res,
-    UseInterceptors,
+  Controller,
+  HttpStatus,
+  Post,
+  Res,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -16,18 +16,18 @@ import { Response } from 'express';
 //@UseGuards(AuthGuard)
 @UseInterceptors(ResponseTimeInterceptor)
 export class DevController {
-    readonly #service: DbPopulateService;
+  readonly #service: DbPopulateService;
 
-    constructor(service: DbPopulateService) {
-        this.#service = service;
-    }
+  constructor(service: DbPopulateService) {
+    this.#service = service;
+  }
 
-    @Post('db_populate')
-    async dbPopulate(@Res() res: Response): Promise<Response> {
-        await this.#service.populateTestdaten();
-        const success = {
-            db_populate: 'success',
-        };
-        return res.status(HttpStatus.OK).json(success);
-    }
+  @Post('db_populate')
+  async dbPopulate(@Res() res: Response): Promise<Response> {
+    await this.#service.populateTestdaten();
+    const success = {
+      db_populate: 'success',
+    };
+    return res.status(HttpStatus.OK).json(success);
+  }
 }
